@@ -98,7 +98,8 @@ INCR 1mars
 DECR 1mars
 ```
 
-#### Manipuler les listes : Une même valeur peut apparaître plusieurs fois
+#### Manipuler les listes
+Une même valeur peut apparaître plusieurs fois
 ```bash
 # Définir une liste et insérer des données
 RPUSH mesCours "BDA"
@@ -112,7 +113,8 @@ LPOP mesCours  # Supprime l'élément à gauche
 RPOP mesCours  # Supprime l'élément à droite
 ```
 
-#### Manipuler les ensembles (Set) : Les valeurs doivent être uniques, et l'ordre des éléments n'est pas important
+#### Manipuler les ensembles (Set) 
+Les valeurs doivent être uniques, et l'ordre des éléments n'est pas important
 ```bash
 # Définir un ensemble et insérer des données
 SADD utilisateurs "Augustin"  # Retourne 1 pour indiquer que l'élément a été ajouté
@@ -131,7 +133,9 @@ SADD autresUtilisateurs "Antoine"
 SADD autresUtilisateurs "Philippe"
 SUNION utilisateurs autresUtilisateurs
 ```
-#### Classer les donnees :  on utilise les set ordonnees (Exemple score des utilisateurs, utiliser dans les systemes de recommandations)
+#### Manipuler les set ordonnees
+Utiliser dans les systemes de recommandations
+Exemple: classement des scores des utilisateurs
 ```bash
 # Définir un ensemble ordonnee et insérer des données
 ZADD score4 19 "Augustin"
@@ -145,10 +149,52 @@ ZREVRANGE score4 0 -1  # renvoie les elements dans l'ordre decroissant
 
 # Connetre l'indice d'un element (les elements sont triees dans l'ordre croissant et le 1er element est d'indice 0)
 ZRANK score4 "Augustin" 
-
-# Union de deux ensembles
-SADD autresUtilisateurs "Antoine"
-SADD autresUtilisateurs "Philippe"
-SUNION utilisateurs autresUtilisateurs
 ```
 
+#### Manipuler les Hash
+```bash
+# Définir un hash et insérer des données
+HSET user:11 username "hsyrine"
+HSET user:11 age 31
+HSET user:11 username "syrine@paris13.fr"
+HMSET user:4 username "Augustin" age 5 email augustin@gmail.fr
+
+# Recuperer les informations de hash
+HGETALL user:11
+
+# Recuperer les valeurs
+HVALS user:4
+
+# Incrementer un element
+HINCRBY user:4 age 4 # incrementer l'age de 4 ans
+```
+
+#### Manipuler les PubSub
+Tres utiliser dans les applications temps reels, par exemple l'echange des message
+On a besoin de deux clients
+
+```bash
+# S'inscrire sur un canal : Client1
+SUBSCRIBE mescours user:1 
+# Publier un  message : Client2
+PUBLISH mescours "Un nouveau cours sur MongoDB" # les clients inscit sur le canal mescours recoivent le messsage en temps reel
+PUBLISH user:1 "Bonjour user1" # seulement le user1 recoit le message
+```
+
+```bash
+# S'inscrire sur plusieurs canaux
+PSUBSCRIBE mes*
+```
+
+```bash
+# Afficher les clés sauvegardes
+KEYS *
+```
+#### Autres
+Redis met a disposition 16 bases de donnees par defaut (0->15)
+Par defaut on est connecte a la base de donnee numero 0
+
+```bash
+# Changer de base de donnees SELECT [index]
+SELECT 1
+```
