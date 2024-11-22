@@ -33,8 +33,7 @@ Les bases de données orientées **clés-valeurs** sont l'une des catégories pr
 
 ## Exemple : Redis
 
-**Redis** (Remote Dictionary Server) est une base de données clé-valeur open source extrêmement performante. Elle est souvent utilisée comme cache en mémoire ou comme file d'attente grâce à ses fonctionnalités avancées et à sa rapidité.
-Redis permet de faire la gestion de concurrence (Exemple si plusieur utilisateur se connecte au meme temps)
+**Redis** (Remote Dictionary Server) est une base de données clé-valeur open source extrêmement performante. Elle est souvent utilisée comme cache en mémoire ou comme file d'attente grâce à ses fonctionnalités avancées et à sa rapidité. Redis permet de faire la gestion de concurrence (exemple : plusieurs utilisateurs se connectant en même temps).
 
 ---
 
@@ -69,7 +68,7 @@ Redis permet de faire la gestion de concurrence (Exemple si plusieur utilisateur
 # Lancer le serveur Redis
 redis-server
 
-# Creer une interface client serveur qui permet de connecter à Redis
+# Créer une interface client-serveur pour se connecter à Redis
 redis-cli
 
 # Ajouter une clé-valeur
@@ -82,54 +81,53 @@ GET user:1
 # Supprimer une clé
 DEL user:1
 
-# Definir la duree de vie d'un cle
-expire demo 120 # demo s'expire dans 120 s
-ttl demo # il renvoie le nombre de la duree de vie restante du cle sinon -1 si la duree de la cle est indefini 
+# Définir la durée de vie d'une clé
+EXPIRE demo 120  # "demo" expire dans 120 secondes
+TTL demo          # Vérifie la durée de vie restante de la clé
 ```
 
-#### Exemple : Compter le nombre des visiteur d'un site web
+#### Exemple : Compter le nombre de visiteurs d'un site web
 ```bash
-# Definir une cle : date, valeur:nombre de visiteur initialement 0
-set 1mars 0
+# Définir une clé : date, valeur initiale = 0
+SET 1mars 0
 
-# Incrementer le nombre de visiteur
-incr 1mars
+# Incrémenter le nombre de visiteurs
+INCR 1mars
 
-# Decrementer le nombre de visiteur
-decr 1mars
+# Décrémenter le nombre de visiteurs
+DECR 1mars
 ```
 
-#### Manipuler les listes : on peut avoir la meme valeur plusieur fois
+#### Manipuler les listes : Une même valeur peut apparaître plusieurs fois
 ```bash
-# Definir une liste et inserer les données
+# Définir une liste et insérer des données
 RPUSH mesCours "BDA"
-RPUSH mesCours "Services Web" # renvoie le nombre d'element dans la liste
+RPUSH mesCours "Services Web"  # Retourne le nombre d'éléments dans la liste
 
 # Afficher la liste LRANGE [nom_liste] [indice_premier_element] [indice_dernier_element]
-LRANGE mesCours 0 -1 # Affiche tout les elements
+LRANGE mesCours 0 -1  # Affiche tous les éléments
 
-# Supprimer un element d'une liste
-LPOP mesCours # supprimer l'element à gauche
-RPOP mesCours # supprimer l'element à droite
+# Supprimer un élément d'une liste
+LPOP mesCours  # Supprime l'élément à gauche
+RPOP mesCours  # Supprime l'élément à droite
 ```
 
-#### Manipuler les ensembles (Set) : les valeurs doivent etre unique + l'ordre des elements n'est pas important
+#### Manipuler les ensembles (Set) : Les valeurs doivent être uniques, et l'ordre des éléments n'est pas important
 ```bash
-# Definir un set et inserer les données
-SADD utilisateurs "Augustin" # renvoie 1 pour dire que l'element est ajouté
+# Définir un ensemble et insérer des données
+SADD utilisateurs "Augustin"  # Retourne 1 pour indiquer que l'élément a été ajouté
 SADD utilisateurs "Ines"
 SADD utilisateurs "Samir"
-SADD utilisateurs "Samir" # renvoie 0 pour dire que l'element n'a pas ete ajouté
+SADD utilisateurs "Samir"  # Retourne 0 pour indiquer que l'élément existe déjà
 
-# Afficher les elements d'un ensemble
+# Afficher les éléments d'un ensemble
 SMEMBERS utilisateurs
 
-# Supprimer un element d'un ensemble
+# Supprimer un élément d'un ensemble
 SREM utilisateurs "MARC"
 
 # Union de deux ensembles
 SADD autresUtilisateurs "Antoine"
 SADD autresUtilisateurs "Philippe"
-SUNION Utilisateurs AutresUtilistauers
-
+SUNION utilisateurs autresUtilisateurs
 ```
