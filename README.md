@@ -131,3 +131,24 @@ SADD autresUtilisateurs "Antoine"
 SADD autresUtilisateurs "Philippe"
 SUNION utilisateurs autresUtilisateurs
 ```
+#### Classer les donnees :  on utilise les set ordonnees (Exemple score des utilisateurs, utiliser dans les systemes de recommandations)
+```bash
+# Définir un ensemble ordonnee et insérer des données
+ZADD score4 19 "Augustin"
+ZADD score4 18 "Ine"
+ZADD score4 10 "Samir"
+ZADD score4 8 "Philippe"
+
+# Afficher la ensemble ordonnee ZRANGE [nom_set] [indice_premier_element] [indice_dernier_element]
+ZRANGE score4 0 -1  # renvoie les elements dans l'ordre croissant
+ZREVRANGE score4 0 -1  # renvoie les elements dans l'ordre decroissant
+
+# Connetre l'indice d'un element (les elements sont triees dans l'ordre croissant et le 1er element est d'indice 0)
+ZRANK score4 "Augustin" 
+
+# Union de deux ensembles
+SADD autresUtilisateurs "Antoine"
+SADD autresUtilisateurs "Philippe"
+SUNION utilisateurs autresUtilisateurs
+```
+
