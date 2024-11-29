@@ -84,7 +84,74 @@ db.films.find({ genre: "Action", country: "FR", year: 1963 })
 ### 1. Exclure certains champs comme grades
 
 ```bash
-db.films.find({ genre: "Action", pays: "France" }, { grades: 0 })
+db.films.find({ genre: "Action", country: "FR" }, { grades: 0 })
 
 ```
 Cette commande exclut le champ grades dans les documents renvoyés.
+
+
+### 2. Exclure les identifiants (_id)
+
+```bash
+db.films.find({ genre: "Action", country: "FR" }, { _id: 0, grades: 0 })
+
+```
+Supprime les champs _id et grades dans les résultats.
+
+### 3. Afficher uniquement les titres et grades
+
+```bash
+db.films.find({ genre: "Action", country: "FR" }, { _id: 0, title: 1, grades: 1 })
+```
+Renvoie uniquement les champs title et grades pour les films correspondants.
+
+---
+
+## Étape 7 : Requêtes avancées
+
+### 1. Films avec des notes supérieures à 10
+
+```bash
+db.films.find({ genre: "Action", country: "FR", "grades.note": { $gt: 10 } }, { _id: 0, title: 1, grades: 1 })
+```
+Filtre les films dont une note est supérieure à 10 (on remarque que même si
+des films ont obtenu certaines notes inférieures à 10 sont affichés).
+
+### 2. Films où toutes les notes sont supérieures à 10
+
+```bash
+db.films.find({ genre: "Action", country: "FR", "grades.score": { $not: { $lte: 10 } } }, { _id: 0, title: 1, grades: 1 })
+```
+Filtre les films où toutes les notes sont strictement supérieures à 10.
+
+
+### 3. Afficher les genres disponibles
+
+```bash
+db.films.distinct("genre")
+```
+Renvoie la liste unique des genres présents dans la collection.
+
+### 4. Films sans résumé
+
+```bash
+db.films.find({ summary: { $exists: false } })
+```
+Filtre les films qui n'ont pas de champ summary.
+
+### 5. Films avec Leonardo DiCaprio en 1997
+
+```bash
+db.films.find({ "actors.last_name": "DiCaprio", "actors.first_name":"Leonardo", year: 1997 })
+```
+Renvoie les films avec Leonardo DiCaprio sortis en 1997.
+
+
+### 6. Films avec Leonardo DiCaprio ou tournés en 1997
+
+```bash
+db.films.find({$or :[ {"actors.last_name": "DiCaprio"}, {"actors.first_name":"Leonardo"}, {year: 1997} ]})
+```
+Renvoie tous les films avec Leonardo DiCaprio ou produits en 1997.
+
+
