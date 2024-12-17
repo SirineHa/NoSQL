@@ -70,6 +70,53 @@ curl -X GET http://youcef:samir@localhost:5984/films/movie:10098
 
 ---
 
+### Manipulation de CouchDB
+
+#### Lancer un client
+Pour tester si CouchDB fonctionne correctement :
+```bash
+curl -X GET http://youcef:samir@localhost:5984
+```
+
+#### Créer une nouvelle base de données (films)
+```bash
+curl -X PUT http://youcef:samir@localhost:5984/films
+```
+
+#### Afficher la représentation de la base **films**
+```bash
+curl -X GET http://youcef:samir@localhost:5984/films
+```
+
+#### Insérer un nouveau document dans la base **films**
+Comme MongoDB, CouchDB n'impose pas de schéma. Toutefois, contrairement à Cassandra, il attribue un identifiant automatique si aucun n'est spécifié.
+
+```bash
+curl -X PUT http://youcef:samir@localhost:5984/films/doc -d '{"cle":"valeur"}'
+```
+
+**Remarques :**
+- Il n'est pas recommandé d'utiliser des identifiants fixes comme **doc**.
+- Si un document sans identifiant est inséré, CouchDB lui attribuera un identifiant unique.
+- Une tentative d'insertion d'un document avec un identifiant existant (comme **doc**) échouera.
+
+#### Insérer un document à partir d'un fichier **movie:10098.json**
+```bash
+curl -X POST http://youcef:samir@localhost:5984/films -d @movie:10098.json -H "Content-Type: application/json"
+```
+
+#### Insérer une collection de documents à partir d'un fichier JSON
+```bash
+curl -X POST http://youcef:samir@localhost:5984/films/_bulk_docs -d @films_couchdb.json -H "Content-Type: application/json"
+```
+
+#### Récupérer un document par son identifiant (**_id**)
+```bash
+curl -X GET http://youcef:samir@localhost:5984/films/movie:10098
+```
+
+---
+
 ### Manipulation : MapReduce
 
 CouchDB utilise MapReduce pour exécuter des requêtes complexes sur les documents de la base. Le processus se déroule en deux étapes :
