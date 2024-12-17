@@ -74,22 +74,58 @@ curl -X GET http://youcef:samir@localhost:5984/films/movie:10098
 
 CouchDB utilise MapReduce pour exécuter des requêtes complexes sur les documents de la base. Le processus se déroule en deux étapes :
 
-1. **Map** : La fonction définit une vue qui extrait les informations souhaitées.
-2. **Reduce** : La fonction agrège ou combine les résultats obtenus par la fonction Map.
+1. **Map** : La fonction est appliquée à chaque document de manière indépendante. Elle prend en paramètre un document, effectue un traitement sur celui-ci et peut produire une ou plusieurs sorties. Cette fonction transforme les documents et définit des clés pour regrouper les résultats. Ensuite, CouchDB trie ces résultats et les répartit entre les différents serveurs d'une grappe.
+
+2. **Reduce** : La fonction combine ou agrège les résultats produits par la fonction Map.
+
+Les résultats des fonctions MapReduce sont sauvegardés sous forme de **vues**. Ces fonctions doivent être exprimées en **JavaScript**.
 
 #### Exemple de fonction Map
-Voici un exemple d’une fonction Map qui extrait tous les titres de films :
+Par défaut, aucune transformation n'est appliquée dans une fonction Map.
+Voici une fonction Map minimale qui retourne tous les documents :
 
 ```javascript
 function (doc) {
-  if (doc.title) {
-    emit(doc._id, doc.title);
+  emit(null, doc);
+}
+```
+
+Voici un exemple d’une fonction Map qui extrait l’année de sortie d’un film ainsi que son titre :
+
+```javascript
+function (doc) {
+  if (doc.year && doc.title) {
+    emit(doc.year, doc.title);
   }
 }
 ```
 
 #### Exemple de fonction Reduce
-Une fonction Reduce pour compter le nombre de films dans la base :
+Une fonction Reduce pour compter le nombre de films **par année** dans la base :
+
+```javascript
+function (keys, values, rereduce) {
+  return values.length;
+}
+```
+
+#### Autre Exemple : Calculer le nombre de films **pour chaque acteur**
+
+##### Fonction Map
+Cette fonction extrait chaque acteur d'un document et associe son prénom, son nom et le titre du film :
+
+```javascript
+function(doc) {
+  if (doc.actors) {
+    for (let i = 0; i < doc.actors.length; i++) {
+      emit({ "prénom": doc.actors[i].first_name, "nom": doc.actors[i].last_name }, doc.title);
+    }
+  }
+}
+```
+
+##### Fonction Reduce
+Cette fonction compte le nombre de films pour chaque acteur :
 
 ```javascript
 function (keys, values, rereduce) {
