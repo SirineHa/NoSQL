@@ -182,6 +182,63 @@ function (keys, values, rereduce) {
 
 ---
 
+## Exercice n°1 :
+
+   - **Contexte** : Soit une matrice \( M \) de dimension \( N x N \), représentant les liens entre un grand nombre de pages web. Chaque lien est associé à un poids (son importance).
+   - **Modèle** : Proposez un modèle sous forme de documents structurés pour représenter cette matrice (inspirez-vous du cas PageRank vu en cours).
+   - **Collection \( C \)** : La ligne \( i \) de la matrice peut être vue comme un vecteur à \( N \) dimensions décrivant la page \( P_i \).
+
+   - **Partie 1** : Spécifiez le traitement **MapReduce** qui calcule la **norme** des vecteurs \( V(v_1, v_2, ..., v_N) \). La norme est définie par :
+     
+     \[ ||V|| = \sqrt{v_1^2 + v_2^2 + ... + v_N^2} \]
+
+   **Solution :**
+   **Fonction Map :**
+   ```javascript
+   function (doc) {
+       var sum = 0;
+       for (var key in doc) {
+           if (doc.hasOwnProperty(key) && !isNaN(doc[key])) {
+               sum += Math.pow(doc[key], 2);
+           }
+       }
+       emit(doc._id, sum);
+   }
+   ```
+   **Fonction Reduce :**
+   ```javascript
+   function (keys, values, rereduce) {
+       return Math.sqrt(values.reduce((a, b) => a + b, 0));
+   }
+   ```
+
+   - **Partie 2** : Implémentez un traitement **MapReduce** pour calculer le produit de la matrice \( M \) avec un vecteur \( W(w_1, w_2, ..., w_N) \). Le résultat est un vecteur \( \phi \) défini par :
+     
+     \[ \phi_i = \sum_{j=1}^N M_{ij} w_j \]
+
+   **Solution :**
+   **Fonction Map :**
+   ```javascript
+   function (doc) {
+       var result = 0;
+       for (var key in doc.values) {
+           if (doc.values.hasOwnProperty(key)) {
+               result += doc.values[key] * W[key];
+           }
+       }
+       emit(doc._id, result);
+   }
+   ```
+
+   **Fonction Reduce :**
+   ```javascript
+   function (keys, values, rereduce) {
+       return values.reduce((a, b) => a + b, 0);
+   }
+   ```
+
+---
+
 ### Conclusion
 CouchDB est un excellent outil pour comprendre les bases de données documentaires et les architectures REST. Avec son système MapReduce, il permet de réaliser des traitements de données efficaces tout en étant simple à configurer.
 
